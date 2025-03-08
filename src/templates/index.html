@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Identification Chatbot</title>
+    <!-- markdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.0/marked.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-height: 300px;
+            max-height: 400px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 18px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background-color: #dcf8c6;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #f1f0f0;
+        }
+        /* Style for markdown content */
+        .bot-message pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 5px 0;
+        }
+        .bot-message code {
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .bot-message img {
+            max-width: 100%;
+            height: auto;
+        }
+        .bot-message table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .bot-message th, .bot-message td {
+            border: 1px solid #ddd;
+            padding: 6px;
+        }
+        .bot-message th {
+            background-color: #f0f0f0;
+        }
+        .bot-message ul, .bot-message ol {
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+        .bot-message blockquote {
+            border-left: 3px solid #ccc;
+            padding-left: 10px;
+            margin: 5px 0;
+            color: #666;
+        }
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message-input {
+            display: flex;
+            gap: 10px;
+        }
+        .message-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .message-input button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .message-input button:hover {
+            background-color: #45a049;
+        }
+        .image-upload {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .image-upload input {
+            flex: 1;
+        }
+        .image-upload button {
+            padding: 10px 15px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .image-upload button:hover {
+            background-color: #0b7dda;
+        }
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+        .plant-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f1f0f0;
+            border-radius: 5px;
+        }
+        .loading {
+            text-align: center;
+            margin: 10px 0;
+            font-style: italic;
+            color: #666;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            margin-top: auto;
+        }
+        .location-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .location-inputs input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .similar-images-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 10px;
+            }
+            .message {
+                max-width: 80%;
+            }
+            .location-inputs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PlantMama</h1>
+            <p>Ask bot or upload picture to find how to take care of a plant.</p>
+            
+            <div class="location-inputs">
+                <input type="text" id="latitudeInput" placeholder="Latitude (optional)">
+                <input type="text" id="longitudeInput" placeholder="Longitude (optional)">
+            </div>
+            
+            <div class="similar-images-toggle">
+                <label for="similarImagesToggle">Show similar images:</label>
+                <input type="checkbox" id="similarImagesToggle" checked>
+            </div>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot-message">
+                Hello! I can help you identify plants and answer questions about them. Start by uploading a clear image of a plant you want to identify.
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <div class="image-upload">
+                <input type="file" id="imageUpload" accept="image/*">
+                <button onclick="identifyPlant()">Identify Plant</button>
+            </div>
+            <img id="previewImage" class="uploaded-image" alt="Uploaded image preview">
+            
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        Group T8 PlantMama
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
