@@ -152,6 +152,8 @@ function addMarkdownMessage(markdownText, sender) {
 
 async function identifyPlant() {
     const imageUpload = document.getElementById('imageUpload');
+
+    // imageUpload.click();
     // const previewImage = document.getElementById('previewImage');
     // const latitude = document.getElementById('latitudeInput').value.trim();
     // const longitude = document.getElementById('longitudeInput').value.trim();
