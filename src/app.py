@@ -27,9 +27,9 @@ def identify_plant():
         data = request.json
         image_base64 = data.get('image')
         session_id = data.get('session_id', 'default')
-        latitude = data.get('latitude')
-        longitude = data.get('longitude')
-        similar_images = data.get('similar_images', True)
+        # latitude = data.get('latitude')
+        # longitude = data.get('longitude')
+        # similar_images = data.get('similar_images', True)
         
         # Initialize conversation context if it doesn't exist
         if session_id not in conversation_contexts:
@@ -40,12 +40,12 @@ def identify_plant():
             'images': [image_base64]
         }
         
-        if latitude and longitude:
-            request_body['latitude'] = float(latitude)
-            request_body['longitude'] = float(longitude)
+        # if latitude and longitude:
+        #     request_body['latitude'] = float(latitude)
+        #     request_body['longitude'] = float(longitude)
         
-        if similar_images:
-            request_body['similar_images'] = similar_images
+        # if similar_images:
+        #     request_body['similar_images'] = similar_images
         
         # Call Plant.id API
         response = requests.post(

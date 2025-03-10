@@ -152,17 +152,17 @@ function addMarkdownMessage(markdownText, sender) {
 
 async function identifyPlant() {
     const imageUpload = document.getElementById('imageUpload');
-    const previewImage = document.getElementById('previewImage');
-    const latitude = document.getElementById('latitudeInput').value.trim();
-    const longitude = document.getElementById('longitudeInput').value.trim();
-    const similarImages = document.getElementById('similarImagesToggle').checked;
+    // const previewImage = document.getElementById('previewImage');
+    // const latitude = document.getElementById('latitudeInput').value.trim();
+    // const longitude = document.getElementById('longitudeInput').value.trim();
+    // const similarImages = document.getElementById('similarImagesToggle').checked;
     
     if (imageUpload.files && imageUpload.files[0]) {
         const reader = new FileReader();
         
         reader.onload = async function(e) {
-            previewImage.src = e.target.result;
-            previewImage.style.display = 'block';
+            // previewImage.src = e.target.result;
+            // previewImage.style.display = 'block';
             
             addMessage("I've uploaded a plant image for identification", 'user');
             
@@ -185,9 +185,9 @@ async function identifyPlant() {
                     body: JSON.stringify({
                         image: base64Image,
                         session_id: sessionId,
-                        latitude: latitude,
-                        longitude: longitude,
-                        similar_images: similarImages
+                        // latitude: latitude,
+                        // longitude: longitude,
+                        // similar_images: similarImages
                     })
                 });
                 
@@ -246,15 +246,15 @@ async function identifyPlant() {
                         }
                     }
                     
-                    if (similarImages && data.plant_data.result.similar_images && data.plant_data.result.similar_images.length > 0) {
-                        plantInfo += `<br><strong>Similar Images:</strong><br>`;
-                        for (let i = 0; i < Math.min(2, data.plant_data.result.similar_images.length); i++) {
-                            const similarImage = data.plant_data.result.similar_images[i];
-                            if (similarImage.url) {
-                                plantInfo += `<a href="${similarImage.url}" target="_blank">View similar plant ${i+1}</a><br>`;
-                            }
-                        }
-                    }
+                    // if (similarImages && data.plant_data.result.similar_images && data.plant_data.result.similar_images.length > 0) {
+                    //     plantInfo += `<br><strong>Similar Images:</strong><br>`;
+                    //     for (let i = 0; i < Math.min(2, data.plant_data.result.similar_images.length); i++) {
+                    //         const similarImage = data.plant_data.result.similar_images[i];
+                    //         if (similarImage.url) {
+                    //             plantInfo += `<a href="${similarImage.url}" target="_blank">View similar plant ${i+1}</a><br>`;
+                    //         }
+                    //     }
+                    // }
                     
                     plantInfo += `<br>You can now ask me questions about this ${topResult.name} plant!`;
                     

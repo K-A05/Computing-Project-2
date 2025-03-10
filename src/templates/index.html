@@ -35,7 +35,7 @@
         }
         .chat-container {
             flex: 1;
-            overflow-y: auto;
+            overflow-y:auto;
             margin-bottom: 20px;
             padding: 10px;
             border: 1px solid #ddd;
@@ -204,15 +204,15 @@
             <h1>PlantMama</h1>
             <p>Ask bot or upload picture to find how to take care of a plant.</p>
             
-            <div class="location-inputs">
+            <!-- <div class="location-inputs">
                 <input type="text" id="latitudeInput" placeholder="Latitude (optional)">
                 <input type="text" id="longitudeInput" placeholder="Longitude (optional)">
-            </div>
+            </div> -->
             
-            <div class="similar-images-toggle">
+            <!-- <div class="similar-images-toggle">
                 <label for="similarImagesToggle">Show similar images:</label>
                 <input type="checkbox" id="similarImagesToggle" checked>
-            </div>
+            </div> -->
         </div>
         
         <div class="chat-container" id="chatContainer">
@@ -222,14 +222,16 @@
         </div>
         
         <div class="input-area">
-            <div class="image-upload">
-                <input type="file" id="imageUpload" accept="image/*">
-                <button onclick="identifyPlant()">Identify Plant</button>
+            <!-- <div class="image-upload">
+                
+               
             </div>
-            <img id="previewImage" class="uploaded-image" alt="Uploaded image preview">
+            -->
             
             <div class="message-input">
                 <input type="text" id="messageInput" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+                <input type="file" id="imageUpload" accept="image/*">
+                <button onclick="identifyPlant()">🔎</button>
                 <button onclick="sendMessage()">Send</button>
             </div>
         </div>
