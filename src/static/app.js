@@ -104,6 +104,8 @@ function addMessage(message, sender) {
     const chatContainer = document.getElementById('chatContainer');
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
+
+    chatContainer.scrollTop = chatContainer.scrollHeight;
     
     if (sender === 'user') {
         messageElement.classList.add('user-message');
@@ -114,8 +116,6 @@ function addMessage(message, sender) {
     }
     
     chatContainer.appendChild(messageElement);
-    
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 function addMarkdownMessage(markdownText, sender) {
