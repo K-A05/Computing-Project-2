@@ -5,9 +5,8 @@ import requests
 import base64
 import json
 from flask_cors import CORS
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
@@ -17,7 +16,6 @@ CORS(app)  # Enable CORS for all routes
 PLANT_ID_API_KEY = os.getenv('PLANT_ID_API_KEY')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-# Store conversation context (could be replaced with a database in production)
 conversation_contexts = {}
 
 @app.route('/api/identify-plant', methods=['POST'])
@@ -31,17 +29,16 @@ def identify_plant():
         # longitude = data.get('longitude')
         # similar_images = data.get('similar_images', True)
         
-        # Initialize conversation context if it doesn't exist
         if session_id not in conversation_contexts:
             conversation_contexts[session_id] = []
         
-        # Prepare request to Plant.id API
         request_body = {
             'images': [image_base64]
         }
         
         # if latitude and longitude:
         #     request_body['latitude'] = float(latitude)
+        
         #     request_body['longitude'] = float(longitude)
         
         # if similar_images:
@@ -59,8 +56,7 @@ def identify_plant():
         
         response.raise_for_status()
         plant_data = response.json()
-        
-        # Add messages to conversation context
+    
         conversation_contexts[session_id].append({
             'role': 'user',
             'parts': [{'text': "I've uploaded a plant image for identification"}]
@@ -71,7 +67,6 @@ def identify_plant():
             'parts': [{'text': "Analyzing your plant image... Please wait."}]
         })
         
-        # If identification successful, call Gemini for welcome message
         if (plant_data and plant_data.get('result') and 
             plant_data.get('result').get('classification') and 
             plant_data.get('result').get('classification').get('suggestions') and 
@@ -132,7 +127,7 @@ def identify_plant():
                 'parts': [{'text': identified_info}]
             })
             
-            # Truncate conversation context if it's too long
+            # Reduce conversation context if it's too long
             if len(conversation_contexts[session_id]) > 10:
                 conversation_contexts[session_id] = conversation_contexts[session_id][-10:]
             
@@ -165,17 +160,14 @@ def chat():
         session_id = data.get('session_id', 'default')
         current_plant = data.get('current_plant', None)
         
-        # Initialize conversation context if it doesn't exist
         if session_id not in conversation_contexts:
             conversation_contexts[session_id] = []
         
-        # Add user message to conversation context
         conversation_contexts[session_id].append({
             'role': 'user',
             'parts': [{'text': message}]
         })
         
-        # Construct user query with plant context if available
         user_query = message
         if current_plant:
             user_query = f"The user is asking about a plant that was identified as {current_plant.get('name')} "
@@ -214,7 +206,6 @@ def chat():
                 'parts': [{'text': bot_response}]
             })
             
-            # Truncate conversation context if it's too long
             if len(conversation_contexts[session_id]) > 10:
                 conversation_contexts[session_id] = conversation_contexts[session_id][-10:]
             

@@ -1,23 +1,17 @@
-// This code replaces the existing JavaScript in your HTML file
-
 let currentPlant = null;
 let conversationContext = [];
-let sessionId = generateSessionId(); // Generate a unique session ID for this browsing session
+let sessionId = generateSessionId(); // Generate a unique session ID
 
-// Generate a simple unique ID for the session
 function generateSessionId() {
     return 'session_' + Math.random().toString(36).substring(2, 15);
 }
 
-// Start conversation with bot
 window.onload = function() {
-    // Intro message
     conversationContext.push({
         role: "model",
         parts: [{ text: "Hello! I can help you identify plants and answer questions about them. Start by uploading a clear image of a plant you want to identify." }]
     });
     
-    // Markdown settings
     marked.setOptions({
         breaks: true,
         gfm: true,
@@ -48,14 +42,12 @@ function sanitizeHTML(html) {
     return temp.innerHTML;
 }
 
-// Handles sending messages
 async function sendMessage() {
     const messageInput = document.getElementById('messageInput');
     const message = messageInput.value.trim();
     
     if (!message) return;
     
-    // Add user message to the chat
     addMessage(message, 'user');
     
     // Clear input field
@@ -68,7 +60,6 @@ async function sendMessage() {
     chatContainer.appendChild(loadingElement);
     
     try {
-        // Call our Flask API for chat
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -91,10 +82,8 @@ async function sendMessage() {
         chatContainer.removeChild(loadingElement);
         
         if (data.response) {
-            // Parse markdown and add to chat
             addMarkdownMessage(data.response, 'bot');
             
-            // Update conversation context with the latest from the server
             if (data.conversation_context) {
                 conversationContext = data.conversation_context;
             }
@@ -126,11 +115,9 @@ function addMessage(message, sender) {
     
     chatContainer.appendChild(messageElement);
     
-    // Scrolls to the bottom of the chat
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Add markdown messages to the chat
 function addMarkdownMessage(markdownText, sender) {
     const chatContainer = document.getElementById('chatContainer');
     const messageElement = document.createElement('div');
@@ -178,7 +165,6 @@ async function identifyPlant() {
             chatContainer.appendChild(loadingElement);
             
             try {
-                // Call our Flask API for plant identification
                 const response = await fetch('/api/identify-plant', {
                     method: 'POST',
                     headers: {
@@ -202,7 +188,6 @@ async function identifyPlant() {
                 
                 chatContainer.removeChild(loadingElement);
                 
-                // Update conversation context with the latest from the server
                 if (data.conversation_context) {
                     conversationContext = data.conversation_context;
                 }
@@ -262,7 +247,6 @@ async function identifyPlant() {
                     
                     addMessage(plantInfo, 'bot');
                     
-                    // Display the welcome message from Gemini if available
                     if (data.welcome_message) {
                         addMarkdownMessage(data.welcome_message, 'bot');
                     }
